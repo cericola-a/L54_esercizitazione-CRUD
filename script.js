@@ -46,7 +46,35 @@ const listaLibri = document.querySelector("#listaLibri");
 //    - un bottone "Elimina"
 
 function caricaLibri() {
-    // TODO
+    messaggio.innerText = 'Caricamento in corso...'
+    listaLibri.innerHTML = "";
+    
+    fetch(API_URL)
+        .then(response => {
+            if (!response.ok) throw new Error(response.statusText);
+            return response.json()
+        })
+        .then(libri => {
+            messaggio.innerText = '';
+
+            libri.forEach(l => {
+                const li = document.createElement('li');
+                const stato = l.letto ? 'Letto' : 'Da leggere'
+                li.innerHTML = `<strong>${l.titolo}</strong> - ${l.autore}. Stato: ${stato}`
+
+                const btnCambia = document.createElement("button");
+                btnCambia.textContent = "Cambia stato";
+                btnCambia.addEventListener("click", () =>  cambiaStato(l));
+
+                const btnElimina = document.createElement("button");
+                btnElimina.textContent = "Elimina";
+                btnElimina.addEventListener("click", () => eliminaLibro(l.id))
+
+                li.append(btnCambia, btnElimina);
+                listaLibri.append(li)
+            })
+
+        })
 }
 
 
@@ -74,7 +102,24 @@ function caricaLibri() {
 // 5. Dopo il salvataggio, richiama caricaLibri().
 
 function creaLibro() {
-    // TODO
+    const nuovoLibro = {
+        titolo: titoloInput.value,
+        autore: autoreInput.value,
+        letto: lettoSelect.value === true
+    }
+
+    fetch(API_URL, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(nuovoLibro)
+    })
+    .then(response => {
+            if (!response.ok) throw new Error(response.statusText);
+            return response.json()
+        })
+        .then(caricaLibri)
 }
 
 
@@ -90,7 +135,14 @@ function creaLibro() {
 // 4. Dopo la modifica, richiama caricaLibri().
 
 function cambiaStato(libro) {
-    // TODO
+    const libroCopia = { ...libro, letto: !libro.letto };
+
+    fetch(API_URL + "/" + libro.id, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(libroCopia)
+    })
+    .then(() => caricaLibri());
 }
 
 
@@ -104,7 +156,13 @@ function cambiaStato(libro) {
 // 2. Dopo l'eliminazione, richiama caricaLibri().
 
 function eliminaLibro(id) {
-    // TODO
+    fetch(API_URL + "/" + id, {
+        method: "DELETE"
+    })
+    .then(response => {
+        if (!response.ok) throw new Error(response.statusText);
+    })
+    .then(caricaLibri);
 }
 
 
