@@ -46,8 +46,8 @@ const listaLibri = document.querySelector("#listaLibri");
 //    - un bottone "Elimina"
 
 function caricaLibri() {
-    messaggio.innerText = 'Caricamento in corso...'
-    listaLibri.innerHTML = "";
+    messaggio.innerText = 'Caricamento in corso...';
+    listaLibri.innerHTML = '';
     
     fetch(API_URL)
         .then(response => {
@@ -62,13 +62,13 @@ function caricaLibri() {
                 const stato = l.letto ? 'Letto' : 'Da leggere'
                 li.innerHTML = `<strong>${l.titolo}</strong> - ${l.autore}. Stato: ${stato}`
 
-                const btnCambia = document.createElement("button");
-                btnCambia.textContent = "Cambia stato";
-                btnCambia.addEventListener("click", () =>  cambiaStato(l));
+                const btnCambia = document.createElement('button');
+                btnCambia.textContent = 'Cambia stato';
+                btnCambia.addEventListener('click', () =>  cambiaStato(l));
 
-                const btnElimina = document.createElement("button");
-                btnElimina.textContent = "Elimina";
-                btnElimina.addEventListener("click", () => eliminaLibro(l.id))
+                const btnElimina = document.createElement('button');
+                btnElimina.textContent = 'Elimina';
+                btnElimina.addEventListener('click', () => eliminaLibro(l.id))
 
                 li.append(btnCambia, btnElimina);
                 listaLibri.append(li)
@@ -137,9 +137,9 @@ function creaLibro() {
 function cambiaStato(libro) {
     const libroCopia = { ...libro, letto: !libro.letto };
 
-    fetch(API_URL + "/" + libro.id, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
+    fetch(API_URL + '/' + libro.id, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(libroCopia)
     })
     .then(() => caricaLibri());
@@ -156,8 +156,8 @@ function cambiaStato(libro) {
 // 2. Dopo l'eliminazione, richiama caricaLibri().
 
 function eliminaLibro(id) {
-    fetch(API_URL + "/" + id, {
-        method: "DELETE"
+    fetch(API_URL + '/' + id, {
+        method: 'DELETE'
     })
     .then(response => {
         if (!response.ok) throw new Error(response.statusText);
